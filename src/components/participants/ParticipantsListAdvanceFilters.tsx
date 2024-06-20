@@ -34,6 +34,12 @@ import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptio
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { useTranslation } from "next-i18next";
 import { PhoneNumberInput } from "@components/PhoneNumberInput";
+import { useGetIdentity } from "@refinedev/core";
+import {
+  getFrequentLabelValues,
+  storeFrequentLabelValues,
+  supabaseInstance,
+} from "./ParticipantUtils";
 
 export function ParticipantsAdvanceFilter() {
   const { t } = useTranslation([
@@ -52,6 +58,9 @@ export function ParticipantsAdvanceFilter() {
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
   const [count, setCount] = useState(0);
+  const { data: loggedInUserData }: any = useGetIdentity();
+
+  const loggedInUserId = loggedInUserData?.userData?.id;
 
   const filterCount = () => {
     const { advanceFilter } = getValues();
@@ -86,26 +95,8 @@ export function ParticipantsAdvanceFilter() {
     return res;
   };
 
-  const sheetRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        sheetRef.current &&
-        !sheetRef.current.contains(event.target as Node)
-      ) {
-        setOpenAdvFilter(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [sheetRef]);
-
   return (
-    <Sheet open={openAdvFilter}>
+    <Sheet open={openAdvFilter} onOpenChange={setOpenAdvFilter}>
       <SheetTrigger
         onClick={() => {
           setOpenAdvFilter(true);
@@ -128,7 +119,7 @@ export function ParticipantsAdvanceFilter() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[446px] rounded-l-xl gap-3" ref={sheetRef}>
+      <SheetContent className="w-[446px] rounded-l-xl gap-3">
         <SheetHeader className="pb-3 text-2xl font-semibold flex flex-row">
           <div className="flex justify-between items-center flex-grow">
             <div className="text-2xl font-semibold">
@@ -320,7 +311,7 @@ export function ParticipantsAdvanceFilter() {
                   pending: false,
                 });
                 setValue("advanceFilter", {});
-                setAdvanceFilterCount(0)
+                setAdvanceFilterCount(0);
               }}
               className="flex gap-1 items-center cursor-pointer"
             >
@@ -336,6 +327,18 @@ export function ParticipantsAdvanceFilter() {
                 setParticpantFiltersData(getValues());
                 setOpenAdvFilter(false);
                 setCount(filterCount);
+                tempFilterData?.tempFilters?.payment_method?.length > 0 &&
+                  storeFrequentLabelValues(
+                    tempFilterData?.tempFilters?.payment_method,
+                    loggedInUserId,
+                    PAYMENT_METHOD
+                  );
+                tempFilterData?.tempFilters?.fee_level?.length > 0 &&
+                  storeFrequentLabelValues(
+                    tempFilterData?.tempFilters?.fee_level,
+                    loggedInUserId,
+                    FEE_LEVEL
+                  );
               }}
             >
               {t("apply_button")}
@@ -475,7 +478,7 @@ export const TransactionType = () => {
 export const PaymentMethod = () => {
   const { t } = useTranslation("new_strings");
   const {
-    field: { value: paymentMethods, onChange: onSelectChange },
+    field: { value: paymentMethods = [], onChange: onSelectChange },
   } = useController({
     name: "tempFilters.payment_method",
   });
@@ -490,18 +493,54 @@ export const PaymentMethod = () => {
     };
   });
 
+  const [savedPaymentMethods, setSavedPaymentMethods] = useState([]);
+  const [showFrequentOptions, setShowFrequentOptions] = useState(true);
+
+  getFrequentLabelValues(PAYMENT_METHOD).then((data) =>
+    setSavedPaymentMethods(data)
+  );
+
+  const togglePaymentMethod = (id: number) => {
+    const selectedValues = paymentMethods?.includes(id)
+      ? paymentMethods?.filter((val: number) => val !== id)
+      : [...paymentMethods, id];
+
+    onSelectChange(selectedValues);
+  };
+
   return (
-    <div>
-      <MultiSelect
-        value={paymentMethods}
-        placeholder={t("new_strings:select_payment_method")}
-        data={paymentMethodValues}
-        onBottomReached={() => {}}
-        onSearch={() => {}}
-        onChange={onSelectChange}
-        searchBar={false}
-        variant="basic"
-      />
+    <div className="flex flex-col gap-4">
+      <div onClick={() => setShowFrequentOptions(false)}>
+        <MultiSelect
+          value={paymentMethods}
+          placeholder={t("new_strings:select_payment_method")}
+          data={paymentMethodValues}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onSelectChange}
+          searchBar={false}
+          variant="basic"
+        />
+      </div>
+      {savedPaymentMethods?.length > 0 && showFrequentOptions && (
+        <div className="flex gap-2 flex-wrap">
+          {savedPaymentMethods?.map((status: any, index: number) => (
+            <div key={index}>
+              <Button
+                className={`rounded-full h-[28px] text-sm font-normal ${
+                  paymentMethods?.includes(status?.id)
+                    ? "bg-primary text-white"
+                    : "bg-white border border-[#D6D7D8]"
+                }`}
+                variant="outline"
+                onClick={() => togglePaymentMethod(status?.id)}
+              >
+                {translatedText(status?.name)}
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -509,7 +548,7 @@ export const PaymentMethod = () => {
 export const FeeLevel = () => {
   const { t } = useTranslation("course.participant");
   const {
-    field: { value: feeLevels, onChange: onSelectChange },
+    field: { value: feeLevels = [], onChange: onSelectChange },
   } = useController({
     name: "tempFilters.fee_level",
   });
@@ -524,20 +563,54 @@ export const FeeLevel = () => {
     };
   });
 
+  const [savedFeeLevels, setSavedFeeLevels] = useState([]);
+  const [showFrequentOptions, setShowFrequentOptions] = useState(true);
+
+  getFrequentLabelValues(FEE_LEVEL).then((data) => setSavedFeeLevels(data));
+
+  const toggleFeeLevel = (id: number) => {
+    const selectedValues = feeLevels?.includes(id)
+      ? feeLevels?.filter((val: number) => val !== id)
+      : [...feeLevels, id];
+
+    onSelectChange(selectedValues);
+  };
+
   return (
-    <div>
-      <MultiSelect
-        value={feeLevels}
-        placeholder={t(
-          "course.participants:assisted_registration.fee_level_placeholder"
-        )}
-        data={feeLevelValues}
-        onBottomReached={() => {}}
-        onSearch={() => {}}
-        onChange={onSelectChange}
-        searchBar={false}
-        variant="basic"
-      />
+    <div className="flex flex-col gap-4">
+      <div onClick={() => setShowFrequentOptions(false)}>
+        <MultiSelect
+          value={feeLevels}
+          placeholder={t(
+            "course.participants:assisted_registration.fee_level_placeholder"
+          )}
+          data={feeLevelValues}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onSelectChange}
+          searchBar={false}
+          variant="basic"
+        />
+      </div>
+      {savedFeeLevels?.length > 0 && showFrequentOptions && (
+        <div className="flex gap-2 flex-wrap">
+          {savedFeeLevels?.map((status: any, index: number) => (
+            <div key={index}>
+              <Button
+                className={`rounded-full h-[28px] text-sm font-normal ${
+                  feeLevels?.includes(status?.id)
+                    ? "bg-primary text-white"
+                    : "bg-white border border-[#D6D7D8]"
+                }`}
+                variant="outline"
+                onClick={() => toggleFeeLevel(status?.id)}
+              >
+                {translatedText(status?.name)}
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
