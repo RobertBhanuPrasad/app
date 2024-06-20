@@ -3,7 +3,7 @@ import { z } from "zod";
 export const validationSchema = (iAmCoTeaching: string, t?:any) => {
   return z.object({
     // Step 1 Schema
-    organization_id: z.string({
+    organization_id: z.number({
       required_error: "Select Organization Name.",
     }),
     organizer_ids: z

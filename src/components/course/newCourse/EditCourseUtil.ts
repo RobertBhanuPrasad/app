@@ -1,26 +1,25 @@
 import _ from "lodash";
-import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import { ASSISTANT_TEACHER, PROGRAM_ORGANIZER, TEACH, TEACHER, TRANSLATE } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { string } from "zod";
 
 export const handleCourseDefaultValues = async (
   programId: number,
-  timeFormat12HoursId: number
+  timeFormat12Hours: string
 ) => {
   const supabase = supabaseClient();
-
+// TODO:need to add ,program_accommodation(*)
   const { data, error } = await supabase
     .from("program")
     .select(
-      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*),program_fee_level_settings(*)"
+      "*,program_language(*),program_schedule(*),program_contact_detail(*),program_admin(*),program_fee(*),organization_product(*,product(name))"
     )
     .eq("id", programId);
 
   console.log("data was", data);
 
   if (!error) {
-    const defaultValues = await getDefaultValues(data[0], timeFormat12HoursId);
+    const defaultValues = await getDefaultValues(data[0], timeFormat12Hours);
 
     return defaultValues;
   }
@@ -30,7 +29,7 @@ export const handleCourseDefaultValues = async (
 
 export const getDefaultValues = async (
   data: ProgramDataBaseType,
-  timeFormat12HoursId: number
+  timeFormat12Hours: string
 ) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
@@ -45,21 +44,21 @@ export const getDefaultValues = async (
   if (data.organization_id)
     defaultValues.organization_id = data.organization_id as number;
 
-  if (data.program_created_by)
-    defaultValues.program_created_by = data.program_created_by as number;
+  if (data.manage_type)
+    defaultValues.program_created_by = data.manage_type as string;
 
   if (data.created_by_user_id) defaultValues.created_by_user_id = data.created_by_user_id as number
 
 
 
   //organizer_ids
-  if (data?.program_organizers) {
-    defaultValues.organizer_ids = _.map(
-      data.program_organizers,
+  if (data?.program_admin) {
+    defaultValues.organizer_ids= _.map(
+      _.filter(data?.program_admin,{program_user_action: PROGRAM_ORGANIZER }),
       "user_id"
-    ) as number[];
-  }
-
+    ) as string[]
+  };
+  
   //is_registration_via_3rd_party
   if (data.is_registration_via_3rd_party != undefined)
     defaultValues.is_registration_via_3rd_party =
@@ -73,32 +72,32 @@ export const getDefaultValues = async (
   // Step 2
 
   //program_type_id
-
-  if (data.program_type_id)
-    defaultValues.program_type_id = data.program_type_id as number;
+  
+  if (data?.organization_product?.product_id)
+    defaultValues.program_type_id = data?.organization_product?.id as number;
 
   //program_teachers
-  if (data?.program_teachers) {
-    defaultValues.teacher_ids = _.map(
-      data.program_teachers,
+  if (data?.program_admin) {
+    defaultValues.teacher_ids= _.map(
+      _.filter(data?.program_admin,{program_user_action: TEACHER }),
       "user_id"
-    ) as number[];
-  }
+    ) as string[]
+  };
 
   //program_assistant_teachers
-  if (data?.program_assistant_teachers) {
-    defaultValues.assistant_teacher_ids = _.map(
-      data.program_assistant_teachers,
+  if (data?.program_admin) {
+    defaultValues.assistant_teacher_ids= _.map(
+      _.filter(data?.program_admin,{program_user_action: ASSISTANT_TEACHER }),
       "user_id"
-    ) as number[];
-  }
+    ) as string[]
+  };
 
   //program_languages
-  if (data?.program_languages) {
+  if (data?.program_language) {
     defaultValues.language_ids = _.map(
-      data.program_languages,
+      _.filter(data.program_language, { language_type: TEACH }),
       "language_id"
-    ) as number[];
+    ) as string[];
   }
 
   //is_language_translation_for_participants
@@ -109,9 +108,8 @@ export const getDefaultValues = async (
   //translation_language_ids
   if (data?.program_translation_languages) {
     defaultValues.translation_language_ids = _.map(
-      data.program_translation_languages,
-      "language_id"
-    ) as number[];
+      _.filter(data.program_languages, { language_type: TRANSLATE }),
+    ) as string[];
   }
 
   //max_capacity
@@ -119,8 +117,8 @@ export const getDefaultValues = async (
     defaultValues.max_capacity = JSON.stringify(data.max_capacity);
 
   //visibility_id
-  if (data?.visibility_id) {
-    defaultValues.visibility_id = data.visibility_id as number;
+  if (data?.visibility) {
+    defaultValues.visibility_id = data.visibility as string;
   }
 
   //is_geo_restriction_applicable
@@ -141,19 +139,20 @@ export const getDefaultValues = async (
   //TODO: Need to do for course notes,description and emial notes
 
   //program_alias_name_id
-  if (data?.program_alias_name_id)
-    defaultValues.program_alias_name_id = data.program_alias_name_id as number;
+  // if (data?.program_alias_name_id)
+  //   defaultValues.program_alias_name_id = data.program_alias_name_id as number;
 
   const supabase = supabaseClient();
   //Step 3
 
   // if the selected program_type contains is_online_program to true then load online_url, state_id,city_id and center_id
   const { data: programTypeData }: any = await supabase
-    .from("program_types")
+    .from("organization_product")
     .select("*")
-    .eq("id", data.program_type_id);
+    .eq("id", data?.organization_product?.product_id);
+    
 
-  if (programTypeData && programTypeData[0]?.is_online_program === true) {
+  if (programTypeData && programTypeData[0]?.is_online === true) {
     //online_url
     if (data?.online_url) defaultValues.online_url = data.online_url;
 
@@ -168,7 +167,7 @@ export const getDefaultValues = async (
     // for form to match requirement we need to store venue data into existingVenue form name
     if (data.venue_id) {
       const { data: venueData }: any = await supabase
-        .from("venue_view_with_names")
+        .from("venue_view_with_name")
         .select("*")
         .eq("id", data.venue_id);
       defaultValues.venue_id = data.venue_id;
@@ -178,8 +177,8 @@ export const getDefaultValues = async (
     }
   }
 
-  if (data?.hour_format_id)
-    defaultValues.hour_format_id = data.hour_format_id as number;
+  if (data?.hour_format)
+    defaultValues.hour_format_id = data.hour_format as string;
 
   if (data?.time_zone_id)
     defaultValues.time_zone_id = data.time_zone_id as number;
@@ -217,7 +216,7 @@ export const getDefaultValues = async (
         ).padStart(2, "0");
 
         // if data contains 12 hour format id we need to store AM or PM with 12 hour standard
-        if (timeFormat12HoursId === data.hour_format_id) {
+        if (timeFormat12Hours === data.hour_format) {
           // now we need store in 12 hour format with AM or PM
 
           if (startHour === "00") {
@@ -271,10 +270,9 @@ export const getDefaultValues = async (
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
 
   //If program_fee_settings_id is null then program as it's own fee levels
-  if (data.program_fee_settings_id == null) {
-    defaultValues.program_fee_level_settings =
-      data.program_fee_level_settings as any;
+  defaultValues.product_fee=data.program_fee as any;
 
+  if (data.early_bird_cut_off_period) {
     defaultValues.early_bird_cut_off_period = data.early_bird_cut_off_period;
   }
 
@@ -292,8 +290,8 @@ export const getDefaultValues = async (
       data.accommodation_fee_payment_mode;
 
   // Step 6
-  if (data.program_contact_details)
-    defaultValues.contact = data.program_contact_details;
+  if (data.program_contact_detail)
+    defaultValues.contact = data.program_contact_detail;
 
   if (data?.bcc_registration_confirmation_email)
     defaultValues.bcc_registration_confirmation_email =

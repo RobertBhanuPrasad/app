@@ -11,10 +11,8 @@ import { useRouter } from "next/router";
 import { NewCourse, displayConfirmBoxWhenRouteChange, getSectionFromUrl } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
-import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 const index = () => {
   
@@ -90,11 +88,10 @@ export const CopyCoursePage = () => {
     const {
       query: { id },
     }: any = useRouter();
+
+    const {optionLabelValue}=optionLabelValueStore()
   
-    const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-      TIME_FORMAT,
-      TIME_FORMAT_12_HOURS
-    )?.id as number;
+    const timeFormat12Hours = optionLabelValue?.hour_format?.HOURS_12 as string
 
     const { setNewCourseData,setProgramCreatedById,setCurrentStep } = newCourseStore();
   
@@ -106,8 +103,11 @@ export const CopyCoursePage = () => {
          */
         let defaultValues = await handleCourseDefaultValues(
           id,
-          timeFormat12HoursId
+          timeFormat12Hours
         );
+
+        console.log(defaultValues,'defaultValues123');
+        
         
           // we have to delete schedules when user click on copy course and other we need to prefill
           defaultValues = _.omit(defaultValues, ["id", "schedules"]);
@@ -167,7 +167,8 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
       "course.participants",
       "course.view_course",
       "course.find_course",
-      "validations_text"
+      "validations_text",
+      "enum"
     ]);
   
     if (!authenticated) {

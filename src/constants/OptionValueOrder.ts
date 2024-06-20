@@ -4,8 +4,8 @@ export const I_AM_CO_TEACHING = 2;
 export const I_AM_ORGANIZER = 3;
 
 //Role Constants
-export const TEACHER = 1;
-export const PROGRAM_ORGANIZER = 2;
+// export const TEACHER = 1;
+// export const PROGRAM_ORGANIZER = 2;
 export const NATIONAL_ADMIN = 3;
 export const SUPER_ADMIN = 4;
 export const FINANCE_ADMIN = 5;
@@ -76,3 +76,10 @@ export const REGULAR = 1
 export const REPEATER = 2
 export const STUDENT = 3
 export const SENIOR_CITIZEN = 4
+
+// enum values
+export const PROGRAM_ORGANIZER="PROGRAM_ORGANIZER";
+export const TEACHER="TEACHER";
+export const ASSISTANT_TEACHER="ASSISTANT_TEACHER"
+export const TEACH="TEACH"
+export const TRANSLATE="TRANSLATE"

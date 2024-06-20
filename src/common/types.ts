@@ -644,6 +644,15 @@ interface ProgramOfflineRevenueDatabaseType {
 }
 
 interface ProgramDataBaseType {
+  organization_product: any;
+  manage_type: any;
+  program_fee: any;
+  hour_format: any;
+  visibility: any;
+  program_language: any;
+  program_admin: any;
+  program_accommodation: any[] | undefined;
+  program_contact_detail: { program_id?: number | undefined; id?: number | undefined; contact_name?: string | undefined; contact_email?: string | undefined; contact_number?: number | undefined; }[] | undefined;
   id?: number;
   created_by_user_id?: number | UsersDataBaseType;
   created_at?: Date;
@@ -702,34 +711,35 @@ interface ProgramDataBaseType {
 }
 
 interface NewCourseFormFieldTypes {
+  program_fee: any;
   id?: number;
   program_code ?: string;
 
   //step 1
   organization_id?: number;
-  organizer_ids?: number[];
+  organizer_ids?: string[];
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
-  program_created_by?: number;
+  program_created_by?: string;
   created_by_user_id?: number;
 
   //step 2
   program_type_id?: number | string;
-  teacher_ids?: number[];
-  assistant_teacher_ids?: number[];
-  visibility_id?: number;
+  teacher_ids?: string[];
+  assistant_teacher_ids?: string[];
+  visibility_id?: string;
   is_language_translation_for_participants?: boolean;
   program_alias_name_id?: number;
   is_geo_restriction_applicable?: boolean;
   is_registration_required?: boolean;
-  language_ids?: number[];
-  translation_language_ids?: number[];
+  language_ids?: string[];
+  translation_language_ids?: string[];
   allowed_countries?: string[];
   max_capacity?: string;
 
   // Step 3
   online_url?: string;
-  hour_format_id?: number;
+  hour_format_id?: string;
   time_zone_id?: number;
   schedules?: any[];
   state_id?: number;
@@ -743,7 +753,7 @@ interface NewCourseFormFieldTypes {
   // Step 4
   is_early_bird_enabled?: boolean;
   early_bird_cut_off_period?: number;
-  program_fee_level_settings?: {
+  product_fee?: {
     program_id?: number;
     id?: number;
     total?: number;
@@ -751,7 +761,6 @@ interface NewCourseFormFieldTypes {
     is_enable?: boolean;
     fee_level_id?: number;
   }[];
-  product_fee_settings?:any//Object consisting of fee_settings
 
   // Step 5
   accommodation?: any[];

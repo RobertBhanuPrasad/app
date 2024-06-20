@@ -227,7 +227,7 @@ export const CourseTypeDropDown = () => {
   const selectQuery: any = {
     resource: "organization_product",
     meta: {
-      select: "*,product(*)",
+      select: "*,product(*),product_teacher(*)",
     },
     optionLabel: `name.${languageCode}`,
     optionValue: 'id',

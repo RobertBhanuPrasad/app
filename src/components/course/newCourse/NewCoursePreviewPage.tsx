@@ -553,7 +553,7 @@ export default function NewCourseReviewPage() {
     const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
     console.log("errors", errors);
 
-    if (errors.success === false) {
+    if (errors.success !== false) {
       console.log(errors.error.issues, "issuessss");
     } else {
       /**

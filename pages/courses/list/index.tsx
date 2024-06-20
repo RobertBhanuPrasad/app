@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { authProvider } from "src/authProvider";
@@ -653,12 +654,15 @@ function index() {
   // ) {
   //   isFiltering = FilterProgramData?.isFetching;
   // }
-
+const handlecopy=()=>{
+  router.push(`/courses/1/copy`);
+}
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">
         {t("new_strings:find_courses")}
       </p>
+      <button onClick={handlecopy}>click me</button>
       <div className="mx-8 flex flex-col mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
