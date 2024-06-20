@@ -103,7 +103,7 @@ export const columns = () => {
 
             cell: ({ row }: any) => {
                 return (
-                    <div className="text-left !min-w-[175px] capitalize flex gap-3">
+                    <div className="text-left !min-w-[175px] flex gap-3">
                         {row?.original?.contact_id?.full_name}
                         {row?.original?.memo?.length && (
                             <div className="cursor-pointer">
