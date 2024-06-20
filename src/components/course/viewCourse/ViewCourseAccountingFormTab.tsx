@@ -11,6 +11,7 @@ import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
 import { BaseTable } from "../findCourse/BaseTable";
 import { translatedText } from "src/common/translations";
+import { useList, HttpError } from "@refinedev/core";
 
 
 const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
@@ -51,7 +52,7 @@ const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
                         Revenue Details
                     </AccordionTrigger>
                     <AccordionContent className="py-2">
-                        <RevenueDetailsAccordionContent programId={programId} />
+                        <RevenueDetailsAccordionContent />
                     </AccordionContent>
                 </AccordionItem>
 
@@ -80,108 +81,63 @@ const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
 };
 
 export default ViewCourseAccountingFormTab;
+interface IProduct {
+    id: number;
+    date: number;
+    amount: number;
+    notes: string;
+  }
 
-const RevenueDetailsAccordionContent = ({ programId }: { programId: number }) => {
-    const { tableQueryResult: offlineRevenueData } = useTable({
-        resource: "program_offline_revenue",
-        meta: {
-            select: "date, amount, notes",
-        },
-        pagination: {
-            pageSize: 1000,
-        },
-        filters: {
-            permanent: [
-                {
-                    field: "program_id",
-                    operator: "eq",
-                    value: programId,
-                },
-            ],
-        },
-    });
-    return (
+const RevenueDetailsAccordionContent = ()=> {
+    
+      const {data :revenue}=useList<IProduct>({
+        resource :"program_offline_revenue",
+      });
+      const program_offline_revenue = revenue?.data ?? [];
+    return(
         <div>
-            {offlineRevenueData?.isLoading ? (
-                <div className="loader"></div>
-            ) : (
-                <div>
-                    {/* Summary cards */}
-                    {/* //Todo : Requirement is not clear  */}
-                    {/* Deposit of Offline Revenue Table */}
-                    <TableHeader>Deposit of Offline Revenue</TableHeader>
-                    <BaseTable
-                        current={1}
-                        tableStyles={{
-                            table: "justify-start",
-                            rowStyles: "!important border-none",
-                        }}
-                        columns={offlineRevenueTableColumns}
-                        data={offlineRevenueData?.data?.data || []}
-                    />
-                    {/* Revenue Details - Participants table */}
-                    <TableHeader className="mt-[10px]">Revenue Details - Participants</TableHeader>
-                    {/* //Todo : Requirement is not clear */}
+            <TableHeader className="p-4">Deposit of Offline Revenue</TableHeader>
+        <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
+          <div className="flex h-[48px] min-w-fit bg-[#7677F41A]">
+          <TableHeader className="px-[12px] min-w-[62px] text-[#333333] text-[14px] w-full">
+              #
+            </TableHeader>
+            <TableHeader className=" min-w-[274px] text-[#333333] text-[14px] w-full">
+            Deposit date
+            </TableHeader>
+            <TableHeader className=" min-w-[274px] text-[#333333] text-[14px] w-full">
+            Deposit amount (EUR)
+            </TableHeader>
+            <TableHeader className=" min-w-[698px] text-[#333333] text-[14px] w-full">
+            Notes
+            </TableHeader>
+          </div>
+
+          <div className="space-y-[12px] my-[12px]">
+            {program_offline_revenue?.map((revenue :any, index) => (
+              <div className="flex items-center w-full h-auto">
+                <div className="px-[12px] text-[#333333] text-[14px] min-w-[62px] w-full">
+                  {index+1}
                 </div>
-            )}
+                <div className="text-[#333333] text-[14px] min-w-[274px] w-full">
+                  {revenue?.date}
+                </div>
+                <div className=" text-[#333333] text-[14px] min-w-[274px] w-full">
+                  {revenue?.amount}
+                </div>
+                <div className=" text-[#333333] text-[14px] min-w-[698px] w-full">
+                  {revenue?.notes}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-    );
-};
+        </div>
+    )
+}
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const offlineRevenueTableColumns: ExtendedColumnDef<any>[] = [
-    {
-        accessorKey: "date",
-        column_name: "Deposit date",
-        enableHiding: false,
-        header: () => {
-            return <TableHeader className="min-w-[150px]">Deposit date</TableHeader>;
-        },
-        cell: ({ row }) => {
-            const date = formatDateString(new Date(row.original.date.slice(0, 10)))
-            return (
-                <Text className="min-w-[150px]">
-                    {date}
-                </Text>
-            );
-        },
-    },
-    {
-        accessorKey: "amount",
-        column_name: "Deposit amount (EUR)",
-        enableHiding: false,
-        header: () => {
-            return <TableHeader className="min-w-[150px]">Deposit amount (EUR)</TableHeader>;
-        },
-        cell: ({ row }) => {
-            return (
-                <abbr className="no-underline" title={row.original.amount}>
-                    <Text className="max-w-[250px] truncate">{row.original.amount}</Text>
-                </abbr>
-
-            );
-        },
-    },
-    {
-        accessorKey: "notes",
-        column_name: "Notes",
-        enableHiding: false,
-        header: () => {
-            return <TableHeader className="min-w-[150px]">Notes</TableHeader>;
-        },
-        cell: ({ row }) => {
-            return (
-                <abbr className="no-underline" title={row.original.notes}>
-                    <Text className="max-w-[250px] truncate">{row.original.notes}</Text>
-                </abbr>
-
-
-            );
-        },
-    },
-
-];
 
 const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) => {
     const { tableQueryResult: changeLogData } = useTable({
