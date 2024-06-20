@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
 ::-webkit-scrollbar {
   width: 4px;
   height: 6px;
@@ -78,9 +73,9 @@
   padding: 4px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(farthest-side, #334BFA 94%, #0000) top/8px 8px
+  background: radial-gradient(farthest-side, #334bfa 94%, #0000) top/8px 8px
       no-repeat,
-    conic-gradient(#0000 30%, #334BFA);
+    conic-gradient(#0000 30%, #334bfa);
   mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
   animation: l13 1s infinite linear;
 }
@@ -160,7 +155,6 @@
   }
   body {
     @apply bg-background text-foreground;
-
   }
 }
 
@@ -235,4 +229,108 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* text editor styles */
+
+.ProseMirror {
+  padding: 10px;
+  border-radius: 16px;
+  border-width: 1px;
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  border-color: #d6d7d8;
+}
+
+.ProseMirror ul {
+  padding: 0 1rem;
+  list-style: disc !important;
+}
+.ProseMirror ol {
+  padding: 0 2rem;
+  list-style: decimal !important;
+}
+
+.ProseMirror code {
+  background-color: rgba(#616161, 0.1);
+  color: #616161;
+}
+
+.ProseMirror pre {
+  background: #0d0d0d;
+  color: #fff;
+  font-family: "JetBrainsMono", monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.ProseMirror code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
+
+/* Unvisited link within .ProseMirror */
+.ProseMirror a:link {
+  color: #0000ee; /* Blue */
+  text-decoration: underline;
+}
+
+/* Visited link within .ProseMirror */
+.ProseMirror a:visited {
+  color: #551a8b; /* Purple */
+  text-decoration: underline;
+}
+
+/* Mouse over link within .ProseMirror */
+.ProseMirror a:hover {
+  color: #0000ee; /* Blue */
+  text-decoration: underline;
+}
+
+/* Selected link within .ProseMirror */
+.ProseMirror a:active {
+  color: #ff0000; /* Red */
+  text-decoration: underline;
+}
+
+/* Focused link within .ProseMirror */
+.ProseMirror a:focus {
+  outline: 1px dotted; /* or another outline style */
+}
+
+.ProseMirror blockquote {
+  padding-left: 1rem;
+  border-left: 3px solid #999999;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 3px solid #999999;
+  margin: 2rem 0;
+}
+
+/* Heading styles */
+.ProseMirror h1,
+h2,
+h3 {
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+.ProseMirror h1 {
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.ProseMirror h2 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.ProseMirror h3 {
+  font-size: 26px;
+  font-weight: bold;
 }

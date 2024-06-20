@@ -62,22 +62,32 @@ const Select: React.FC<SelectProps> = ({
             : defaultValue;
 
     return (
-        <SelectContext.Provider value={{ value }}>
-            <SelectPrimitive.Root
-                // Set the internal value of the select component.
-                value={value as string}
-                defaultValue={defaultValue as string}
-                // Handle the onValueChange event and convert the value back to its
-                // original type before passing it to the consumer.
-                onValueChange={(e) =>
-                    onValueChange?.(typeof e == "string" ? e : JSON.parse(e))
-                }
-                // Pass all other props to the underlying select component.
-                {...props}
-            >
-                {children}
-            </SelectPrimitive.Root>
-        </SelectContext.Provider>
+      <SelectContext.Provider value={{ value }}>
+        <SelectPrimitive.Root
+          // Set the internal value of the select component.
+          value={value as string}
+          defaultValue={defaultValue as string}
+          // Handle the onValueChange event and convert the value back to its
+          // original type before passing it to the consumer.
+          onValueChange={(e) => {
+            // there are total three possible values for e
+            // 1. e can be pure string ex: e="IN" | "CA" | "ng"
+            // 2. e can be pure object ex: e={label:"IN", value:"IN"} | {label:"CA", value:"CA"} | {label:"ng", value:"ng"}
+            // 3. e can be number ex: e=1 | 2 | 3
+            // Explanation: JSON.parse will throw error for pure string for point 1.
+            // so for that we can pass as it is 
+            try {
+              onValueChange?.(JSON.parse(e));
+            } catch (error) {
+              onValueChange?.(e);
+            }
+          }}
+          // Pass all other props to the underlying select component.
+          {...props}
+        >
+          {children}
+        </SelectPrimitive.Root>
+      </SelectContext.Provider>
     );
 };
 
